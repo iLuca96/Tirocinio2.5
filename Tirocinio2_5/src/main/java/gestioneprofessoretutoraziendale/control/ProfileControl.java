@@ -60,9 +60,9 @@ public class ProfileControl extends HttpServlet {
         String nome = null;
         String cognome = null;
         String company = null;
-        String    indirizzo = null;
-        String    telefono = null;
-        String    fax = null;
+        String indirizzo = null;
+        String telefono = null;
+        String fax = null;
         String email = null;
         String luogo = null;
         String sitoweb = null;
