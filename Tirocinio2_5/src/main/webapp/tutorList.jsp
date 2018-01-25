@@ -7,9 +7,7 @@ ProfessoreTutorAziendaleModel professoreModel;
 
 professoreModel = new ProfessoreTutorAziendaleModel();
 
-request.setAttribute("tutor_segreteria", professoreModel.doRetrieveAllTutor(""));
-
-Collection<?> teachers = (Collection<?>) request.getAttribute("tutor_segreteria");
+Collection<?> teachers = professoreModel.doRetrieveAllTutor("");
 
 %>    
 <html>
@@ -79,12 +77,12 @@ Collection<?> teachers = (Collection<?>) request.getAttribute("tutor_segreteria"
 	    <ul class="list-group">
 	    <%
 	  	int i = 0;
-	  	if (teachers != null && teachers.size() != 0) {
+	  	if (teachers.size() > 0) {
 				Iterator<?> it_teachers = teachers.iterator(); %>
 	    <%                        
 			 while (it_teachers.hasNext()) {
 				ProfessoreTutorAziendale teacher = (ProfessoreTutorAziendale) it_teachers.next();
-				if(teacher.getCompany().length()>0)
+				if(teacher.getEmail().length()>0)
 				{
 					if(i%2==0)
 					{
@@ -130,11 +128,6 @@ Collection<?> teachers = (Collection<?>) request.getAttribute("tutor_segreteria"
 		{
 			i=1;
 		%>
-			<li class="list-group-item"> <strong> <h3> Nessun Profilo Tutor Aziendale trovato. </h3></strong> </li>
-		<%}
-			
-		if(i==0)
-		{%>
 			<li class="list-group-item"> <strong> <h3> Nessun Profilo Tutor Aziendale trovato. </h3></strong> </li>
 		<%}%>
 	 </ul>

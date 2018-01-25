@@ -7,9 +7,7 @@ ProfessoreTutorAziendaleModel professoreModel;
 
 professoreModel = new ProfessoreTutorAziendaleModel();
 
-request.setAttribute("teachers_segreteria", professoreModel.doRetrieveAllTeachers(""));
-
-Collection<?> teachers = (Collection<?>) request.getAttribute("teachers_segreteria");
+Collection<?> teachers = (Collection<?>) professoreModel.doRetrieveAllTeachers("");
 
 %>    
 <html>
@@ -74,17 +72,17 @@ Collection<?> teachers = (Collection<?>) request.getAttribute("teachers_segreter
 <body>
 <div class="container">
   <fieldset>
-  <legend><h2>Lista Professori</h2></legend>			
+  <legend><h2>Lista Professori <%teachers.size(); %></h2></legend>			
 	<div class="list-group-wrapper">
 	    <ul class="list-group">
 	    <%
 	  	int i = 0;
-	  	if (teachers != null && teachers.size() != 0) {
+	  	if (teachers.size() > 0) {
 				Iterator<?> it_teachers = teachers.iterator(); %>
 	    <%                        
 			 while (it_teachers.hasNext()) {
-				ProfessoreTutorAziendale teacher = (ProfessoreTutorAziendale) it_teachers.next();
-				if(teacher.getCompany().length()>0)
+				ProfessoreTutorAziendale professore = (ProfessoreTutorAziendale) it_teachers.next();
+				if(professore.getEmail().length()>0)
 				{
 					if(i%2==0)
 					{
@@ -96,18 +94,18 @@ Collection<?> teachers = (Collection<?>) request.getAttribute("teachers_segreter
 					            <div class="well well-sm">
 					                <div class="row">
 					                    <div class="col-xs-3 col-md-3 text-center">
-					                        <img src="<%=teacher.getImmagine_profilo()%>" alt="immagine del profilo" class="img-rounded img-responsive" />
+					                        <img src="<%=professore.getImmagine_profilo()%>" alt="immagine del profilo" class="img-rounded img-responsive" />
 					                    </div>
 					                    <div class="col-xs-9 col-md-9 section-box">
 					                        <h3>
 					                        <p>
-					                            <i class="fa fa-user"> <%=teacher.getNome()%> <%=teacher.getCognome()%> </i> <a href="ShowProfile.jsp?id=<%=teacher.getUsername()%>"> Mostra Altro</a>
+					                            <i class="fa fa-user"> <%=professore.getNome()%> <%=professore.getCognome()%> </i> <a href="ShowProfile.jsp?id=<%=professore.getUsername()%>"> Mostra Altro</a>
 					                        </p>
 					                        <p>
-					                            <i class="fa fa-envelope"> <%=teacher.getEmail()%> </i>
+					                            <i class="fa fa-envelope"> <%=professore.getEmail()%> </i>
 					                        </p>
 					                        <p>
-					                            <i class="fa fa-link"> <a href="<%=teacher.getSitoweb()%>" target="_blank"> <%=teacher.getSitoweb()%></a> </i> 
+					                            <i class="fa fa-link"> <a href="<%=professore.getSitoweb()%>" target="_blank"> <%=professore.getSitoweb()%></a> </i> 
 					                        </p>
 					                        </h3>
 					                    </div>
@@ -128,15 +126,9 @@ Collection<?> teachers = (Collection<?>) request.getAttribute("teachers_segreter
 		} 
 		else
 		{
-			i=1;
 		%>
 			<li class="list-group-item"> <strong> <h3> Nessun Profilo Professore trovato. </h3></strong> </li>
-		<%}
-			
-		if(i==0)
-		{%>
-			<li class="list-group-item"> <strong> <h3> Nessun Profilo Professore trovato. </h3></strong> </li>
-		<%}%>
+		<%}%>	
 	 </ul>
   </div>
   
