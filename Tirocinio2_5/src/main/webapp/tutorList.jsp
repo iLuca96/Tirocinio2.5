@@ -82,7 +82,7 @@ Collection<?> teachers = professoreModel.doRetrieveAllTutor("");
 	    <%                        
 			 while (it_teachers.hasNext()) {
 				ProfessoreTutorAziendale teacher = (ProfessoreTutorAziendale) it_teachers.next();
-				if(teacher.getEmail().length()>0)
+				if(teacher.getCompany().length()>0)
 				{
 					if(i%2==0)
 					{
