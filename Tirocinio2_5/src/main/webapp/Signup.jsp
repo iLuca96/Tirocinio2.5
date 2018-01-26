@@ -32,10 +32,18 @@
 	   }  
 	
 		if(session.getAttribute("email_not_valid")!=null)
-		   {
+		{
 		%>
 			<div class="alert alert-danger">
 			    <strong>Spiacenti! </strong> <%=session.getAttribute("email_not_valid")%> 
+			</div>
+		<%
+		}
+		if(session.getAttribute("username_not_valid")!=null)
+		   {
+		%>
+			<div class="alert alert-danger">
+			    <strong>Spiacenti! </strong> <%=session.getAttribute("username_not_valid")%> 
 			</div>
 		
 		<%  
