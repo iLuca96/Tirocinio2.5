@@ -182,8 +182,8 @@ public class SignupControl extends HttpServlet {
   }
 
   /**
-   * Il metodo confronta l'email passata con una espressione 
-   * regolare, per verificare se la variabile passata è una email valida.
+   * Il metodo confronta la username passata con una espressione 
+   * regolare, per verificare se la variabile passata è una username valida.
    * @param username tipo String, Variabile che viene cofrontata 
    *     con le espressioni regolari per verificare se è una username valida
    * @return true/false valore boolean che se è false allora 

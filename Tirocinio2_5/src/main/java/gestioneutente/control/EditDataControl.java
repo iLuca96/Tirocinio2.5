@@ -92,137 +92,142 @@ public class EditDataControl extends HttpServlet {
           String email = request.getParameter("email");
 
           if (validateEmail(email)) {
-            if (isStudent(email)) {
-              if (sessioneStudent != null) {
-                if (sessioneStudent.getMatricola().length() > 0) {
-                  controlStudent = 1;
+            if (validateUsername(username)) {
+              if (isStudent(email)) {
+                if (sessioneStudent != null) {
+                  if (sessioneStudent.getMatricola().length() > 0) {
+                    controlStudent = 1;
+                  }
+                } else {
+                  if (sessioneTeacher != null) {
+                    if (sessioneTeacher.getUsername().length() > 0) {
+                      session.setAttribute("email_not_ok", "Se vuoi modificare l'email, "
+                          + "quest'ultima deve essere di tipo Professore.");
+                    }
+                  } else {
+                    session.setAttribute("email_not_ok", "Se vuoi modificare l'email, "
+                        + "quest'ultima deve essere di tipo Tutor Aziendale.");
+                  }
                 }
-              } else {
+              } else if (isTeacher(email)) {
                 if (sessioneTeacher != null) {
                   if (sessioneTeacher.getUsername().length() > 0) {
+                    controlTeacher = 1;
+                  }
+                } else {
+                  if (sessioneStudent != null) {
+                    if (sessioneStudent.getMatricola().length() > 0) {
+                      session.setAttribute("email_not_ok", "Se vuoi modificare l'email, "
+                          + "quest'ultima deve essere di tipo Studente.");
+                    }
+                  } else {
+                    session.setAttribute("email_not_ok", "Se vuoi modificare l'email, "
+                        + "quest'ultima deve essere di tipo Tutor Aziendale.");
+                  }
+                }
+              } else {
+                if (sessioneTutor != null) {
+                  if (sessioneTutor.getUsername().length() > 0) {
+                    controlTutor = 1;
+                  }
+                } else {
+                  if (sessioneStudent != null) {
+                    if (sessioneStudent.getMatricola().length() > 0) {
+                      session.setAttribute("email_not_ok", "Se vuoi modificare l'email, "
+                          + "quest'ultima deve essere di tipo Studente.");
+                    }
+                  } else {
                     session.setAttribute("email_not_ok", "Se vuoi modificare l'email, "
                         + "quest'ultima deve essere di tipo Professore.");
                   }
-                } else {
-                  session.setAttribute("email_not_ok", "Se vuoi modificare l'email, "
-                      + "quest'ultima deve essere di tipo Tutor Aziendale.");
                 }
               }
-            } else if (isTeacher(email)) {
-              if (sessioneTeacher != null) {
-                if (sessioneTeacher.getUsername().length() > 0) {
-                  controlTeacher = 1;
+
+              if (controlStudent == 1) {
+                if (matricola == "") {
+                  session.setAttribute("vuota", "Sei uno studente, la matricola è necessaria!");
+                } else {
+                  if (sessioneStudent.getMatricola().length() > 0) {
+                    if (sessioneStudent.getMatricola().equalsIgnoreCase(matricola)) {
+                      Studente bean = new Studente();
+                      bean.setMatricola(matricola);
+                      bean.setNome(firstName);
+                      bean.setCognome(lastName);
+                      bean.setEmail(email);
+                      bean.setUsername(username);
+                      bean.setPsw(psw);
+                      model.doModify(bean);
+
+                      request.getSession().setAttribute("student"
+                          + "", model.doRetrieveByKey(sessioneStudent.getMatricola()));
+
+                      session.setAttribute("editdata_completed", email);
+                      session.setAttribute("editdata_completed_as_student_tutor_teacher"
+                          + "", "uno Studente");
+                    } else {
+                      session.setAttribute("not_equals", "La matricola inserita non "
+                          + "risulta essere uguale a \"" + sessioneStudent.getMatricola() + "\"");
+                    }
+                  }
                 }
               } else {
-                if (sessioneStudent != null) {
-                  if (sessioneStudent.getMatricola().length() > 0) {
-                    session.setAttribute("email_not_ok", "Se vuoi modificare l'email, "
-                        + "quest'ultima deve essere di tipo Studente.");
+                if (controlTeacher == 1) {
+                  if (username == "") {
+                    session.setAttribute("vuota", "Sei un professore, la username è necessaria!");
+                  } else if (sessioneTeacher.getUsername().length() > 0) {
+                    if (sessioneTeacher.getUsername().equalsIgnoreCase(username)) {
+                      ProfessoreTutorAziendale bean = new ProfessoreTutorAziendale();
+                      bean.setTipo("Professore");
+                      bean.setNome(firstName);
+                      bean.setCognome(lastName);
+                      bean.setEmail(email);
+                      bean.setUsername(username);
+                      bean.setPsw(psw);
+                      Tutormodel.doModify(bean);
+
+                      request.getSession().setAttribute("teacher"
+                          + "", Tutormodel.doRetrieveByKey(sessioneTeacher.getUsername()));
+
+                      session.setAttribute("editdata_completed", email);
+                      session.setAttribute("editdata_completed_as_student_tutor_teacher"
+                          + "", "un Professore");
+                    } else {
+                      session.setAttribute("not_equals", "La username inserita "
+                          + "non risulta essere uguale "
+                          + "a \"" + sessioneTeacher.getUsername() + "\"");
+                    }
                   }
-                } else {
-                  session.setAttribute("email_not_ok", "Se vuoi modificare l'email, "
-                      + "quest'ultima deve essere di tipo Tutor Aziendale.");
+                } else if (controlTutor == 1) {
+                  if (username == "") {
+                    session.setAttribute("vuota", "Sei un Tutor Aziendale, "
+                        + "la username è necessaria!");
+                  } else if (sessioneTutor.getUsername().length() > 0) {
+                    if (sessioneTutor.getUsername().equalsIgnoreCase(username)) {
+                      ProfessoreTutorAziendale bean = new ProfessoreTutorAziendale();
+                      bean.setTipo("TutorAziendale");
+                      bean.setNome(firstName);
+                      bean.setCognome(lastName);
+                      bean.setEmail(email);
+                      bean.setUsername(username);
+                      bean.setPsw(psw);
+                      Tutormodel.doModify(bean);
+
+                      request.getSession().setAttribute("tutor"
+                          + "", Tutormodel.doRetrieveByKey(sessioneTutor.getUsername()));
+
+                      session.setAttribute("editdata_completed", email);
+                      session.setAttribute("editdata_completed_as_student_tutor_teacher"
+                          + "", "un Tutor Aziendale");
+                    } else {
+                      session.setAttribute("not_equals", "La username inserita "
+                          + "non risulta essere uguale a \"" + sessioneTutor.getUsername() + "\"");
+                    }
+                  }
                 }
               }
             } else {
-              if (sessioneTutor != null) {
-                if (sessioneTutor.getUsername().length() > 0) {
-                  controlTutor = 1;
-                }
-              } else {
-                if (sessioneStudent != null) {
-                  if (sessioneStudent.getMatricola().length() > 0) {
-                    session.setAttribute("email_not_ok", "Se vuoi modificare l'email, "
-                        + "quest'ultima deve essere di tipo Studente.");
-                  }
-                } else {
-                  session.setAttribute("email_not_ok", "Se vuoi modificare l'email, "
-                      + "quest'ultima deve essere di tipo Professore.");
-                }
-              }
-            }
-
-            if (controlStudent == 1) {
-              if (matricola == "") {
-                session.setAttribute("vuota", "Sei uno studente, la matricola è necessaria!");
-              } else {
-                if (sessioneStudent.getMatricola().length() > 0) {
-                  if (sessioneStudent.getMatricola().equalsIgnoreCase(matricola)) {
-                    Studente bean = new Studente();
-                    bean.setMatricola(matricola);
-                    bean.setNome(firstName);
-                    bean.setCognome(lastName);
-                    bean.setEmail(email);
-                    bean.setUsername(username);
-                    bean.setPsw(psw);
-                    model.doModify(bean);
-
-                    request.getSession().setAttribute("student"
-                        + "", model.doRetrieveByKey(sessioneStudent.getMatricola()));
-
-                    session.setAttribute("editdata_completed", email);
-                    session.setAttribute("editdata_completed_as_student_tutor_teacher"
-                        + "", "uno Studente");
-                  } else {
-                    session.setAttribute("not_equals", "La matricola inserita non "
-                        + "risulta essere uguale a \"" + sessioneStudent.getMatricola() + "\"");
-                  }
-                }
-              }
-            } else {
-              if (controlTeacher == 1) {
-                if (username == "") {
-                  session.setAttribute("vuota", "Sei un professore, la username è necessaria!");
-                } else if (sessioneTeacher.getUsername().length() > 0) {
-                  if (sessioneTeacher.getUsername().equalsIgnoreCase(username)) {
-                    ProfessoreTutorAziendale bean = new ProfessoreTutorAziendale();
-                    bean.setTipo("Professore");
-                    bean.setNome(firstName);
-                    bean.setCognome(lastName);
-                    bean.setEmail(email);
-                    bean.setUsername(username);
-                    bean.setPsw(psw);
-                    Tutormodel.doModify(bean);
-
-                    request.getSession().setAttribute("teacher"
-                        + "", Tutormodel.doRetrieveByKey(sessioneTeacher.getUsername()));
-
-                    session.setAttribute("editdata_completed", email);
-                    session.setAttribute("editdata_completed_as_student_tutor_teacher"
-                        + "", "un Professore");
-                  } else {
-                    session.setAttribute("not_equals", "La username inserita "
-                        + "non risulta essere uguale "
-                        + "a \"" + sessioneTeacher.getUsername() + "\"");
-                  }
-                }
-              } else if (controlTutor == 1) {
-                if (username == "") {
-                  session.setAttribute("vuota", "Sei un Tutor Aziendale, "
-                      + "la username è necessaria!");
-                } else if (sessioneTutor.getUsername().length() > 0) {
-                  if (sessioneTutor.getUsername().equalsIgnoreCase(username)) {
-                    ProfessoreTutorAziendale bean = new ProfessoreTutorAziendale();
-                    bean.setTipo("TutorAziendale");
-                    bean.setNome(firstName);
-                    bean.setCognome(lastName);
-                    bean.setEmail(email);
-                    bean.setUsername(username);
-                    bean.setPsw(psw);
-                    Tutormodel.doModify(bean);
-
-                    request.getSession().setAttribute("tutor"
-                        + "", Tutormodel.doRetrieveByKey(sessioneTutor.getUsername()));
-
-                    session.setAttribute("editdata_completed", email);
-                    session.setAttribute("editdata_completed_as_student_tutor_teacher"
-                        + "", "un Tutor Aziendale");
-                  } else {
-                    session.setAttribute("not_equals", "La username inserita "
-                        + "non risulta essere uguale a \"" + sessioneTutor.getUsername() + "\"");
-                  }
-                }
-              }
+              session.setAttribute("username_not_valid", "Username "
+                  + "inserita \"" + username + "\" NON è valida!");
             }
           } else {
             session.setAttribute("email_not_valid", "Email "
@@ -263,6 +268,25 @@ public class EditDataControl extends HttpServlet {
   public boolean validateEmail(String email) {
     Pattern pattern = Pattern.compile("[a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}");
     Matcher matcher = pattern.matcher(email);
+
+    if (matcher.matches()) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  
+  /**
+   * Il metodo confronta la username passata con una espressione 
+   * regolare, per verificare se la variabile passata è una username valida.
+   * @param username tipo String, Variabile che viene cofrontata 
+   *     con le espressioni regolari per verificare se è una username valida
+   * @return true/false valore boolean che se è false allora 
+   *     il parametro passato non è una username valida, true altrimenti.
+  */
+  public boolean validateUsername(String username) {
+    Pattern pattern = Pattern.compile("[a-zA-Z0-9]");
+    Matcher matcher = pattern.matcher(username);
 
     if (matcher.matches()) {
       return true;
