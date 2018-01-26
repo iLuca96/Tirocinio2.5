@@ -39,6 +39,20 @@
 		      </div>
 	      	<%}
 	      	
+		  	  if(request.getAttribute("fax_not_valid_profile")!=null)
+		      {%>
+		      <div class="alert alert-danger">
+		        <strong> <%=request.getAttribute("fax_not_valid_profile")%></strong> 
+		      </div>
+	      	<%}
+		  	  
+		  	  if(request.getAttribute("telefono_not_valid_profile")!=null)
+		      {%>
+		      <div class="alert alert-danger">
+		        <strong> <%=request.getAttribute("telefono_not_valid_profile")%></strong> 
+		      </div>
+	      	<%}
+		  	  
 	      	  if(request.getAttribute("message_danger_profile")!=null)
 		      {%>
 		      <div class="alert alert-danger">

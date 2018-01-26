@@ -161,51 +161,68 @@ public class ProfileControl extends HttpServlet {
         if (action.equalsIgnoreCase("createProfile") || action.equalsIgnoreCase("EditProfile")) {
 
           if (validateEmail(email)) {
-            ProfessoreTutorAziendale bean = new ProfessoreTutorAziendale();
-            bean.setNome(nome);
-            bean.setCognome(cognome);
-            if (sessioneTeacher != null) {
-              bean.setTipo("Professore");
-              bean.setUsername(sessioneTeacher.getUsername());
-            }
+            if (validateTelFax(fax)) {
+              if (validateTelFax(telefono)) {
+                ProfessoreTutorAziendale bean = new ProfessoreTutorAziendale();
+                bean.setNome(nome);
+                bean.setCognome(cognome);
+                if (sessioneTeacher != null) {
+                  bean.setTipo("Professore");
+                  bean.setUsername(sessioneTeacher.getUsername());
+                }
             
-            if (sessioneTutor != null) {
-              bean.setTipo("Tutor Aziendale");
-              bean.setUsername(sessioneTutor.getUsername());
-            }
-            bean.setCompany(company);
-            bean.setIndirizzo(indirizzo);
-            bean.setTelefono(telefono);
-            bean.setFax(fax);
-            bean.setEmail(email);
-            bean.setCitta(luogo);
-            bean.setSitoweb(sitoweb);
-            bean.setChisono(chisono);
-            bean.setImmagine_profilo(imageProfile);
-            Tutormodel.doModifyProfile(bean);
+                if (sessioneTutor != null) {
+                  bean.setTipo("Tutor Aziendale");
+                  bean.setUsername(sessioneTutor.getUsername());
+                }
+                bean.setCompany(company);
+                bean.setIndirizzo(indirizzo);
+                bean.setTelefono(telefono);
+                bean.setFax(fax);
+                bean.setEmail(email);
+                bean.setCitta(luogo);
+                bean.setSitoweb(sitoweb);
+                bean.setChisono(chisono);
+                bean.setImmagine_profilo(imageProfile);
+                Tutormodel.doModifyProfile(bean);
 
-            if (action.equalsIgnoreCase("EditProfile")) {
-              request.setAttribute("message_success_profile", "Profilo Modificato con successo.");
-              return_path = "/EditProfile.jsp";
+                if (action.equalsIgnoreCase("EditProfile")) {
+                  request.setAttribute("message_success_profile", ""
+                      + "Profilo Modificato con successo.");
+                  return_path = "/EditProfile.jsp";
+                } else {
+                  request.setAttribute("message_success_profile", "Profilo Creato con successo.");
+                }
+
+                if (sessioneTeacher != null) {
+                  request.getSession().setAttribute("teacher", Tutormodel
+                      .doRetrieveByKey(sessioneTeacher.getUsername()));
+                }
+                if (sessioneTutor != null) {
+                  request.getSession().setAttribute("tutor", Tutormodel
+                      .doRetrieveByKey(sessioneTutor.getUsername()));
+                }
+              } else {
+                request.setAttribute("telefono_not_valid_profile", ""
+                    + "Numero di telefono inserito non valido.");
+                if (action.equalsIgnoreCase("EditProfile")) {
+                  return_path = "/EditProfile.jsp";
+                }
+              }
             } else {
-              request.setAttribute("message_success_profile", "Profilo Creato con successo.");
-            }
-
-            if (sessioneTeacher != null) {
-              request.getSession().setAttribute("teacher", Tutormodel
-                  .doRetrieveByKey(sessioneTeacher.getUsername()));
-            }
-            if (sessioneTutor != null) {
-              request.getSession().setAttribute("tutor", Tutormodel
-                  .doRetrieveByKey(sessioneTutor.getUsername()));
-            }
+              request.setAttribute("fax_not_valid_profile", ""
+                  + "Numero del fax inserito non valido.");
+              if (action.equalsIgnoreCase("EditProfile")) {
+                return_path = "/EditProfile.jsp";
+              }
+            } 
           } else {
-            request.setAttribute("email_not_valid_profile", "Email inserita non valida.");
+            request.setAttribute("email_not_valid_profile", ""
+                + "Email inserita non valida.");
             if (action.equalsIgnoreCase("EditProfile")) {
               return_path = "/EditProfile.jsp";
             }
           }
-
         }
       } catch (Exception ex) {
         request.setAttribute("message_danger_profile", "File upload failed due to : " + ex);
@@ -272,6 +289,26 @@ public class ProfileControl extends HttpServlet {
   public boolean validateEmail(String email) {
     Pattern pattern = Pattern.compile("[a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}");
     Matcher matcher = pattern.matcher(email);
+
+    if (matcher.matches()) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  
+  /**
+  * Il metodo confronta il numero di telefono e il fax passati con una espressione regolare,
+  *  per verificare se la variabile passata è valida.
+  * @param numero tipo String, Variabile che viene cofrontata 
+  *     con le espressioni regolari per verificare se è un numero valido
+  * @return true/false valore boolean che se è false allora il 
+  *     parametro passato non è un numero valido, true altrimenti.
+ */
+  public boolean validateTelFax(String numero) {
+    Pattern pattern = Pattern.compile("(\\((00|\\+)39\\)|(00|\\+)39)?"
+        + "(38[890]|34[7-90]|36[680]|33[3-90]|32[89])\\d{7}$");
+    Matcher matcher = pattern.matcher(numero);
 
     if (matcher.matches()) {
       return true;
