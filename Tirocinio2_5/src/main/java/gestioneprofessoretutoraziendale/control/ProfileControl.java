@@ -270,8 +270,9 @@ public class ProfileControl extends HttpServlet {
    */
   
   private static String creaDir(String nameFolder) {
-    //String Dir = "C:/Users/ciro9/eclipse-workspace/
-    //Tirocinio2.5/WebContent/Users/TeacherTutor/" + name_folder;
+
+    //String Dir = "C:/Users/Luca/Desktop/progetto IS/git/Tirocinio2_5/
+    //src/main/webapp/Users/TeacherTutor;
     String dir = "C:/apache-tomcat-9.0.0.M17/webapps/Tirocinio2.5/Users/TeacherTutor/" + nameFolder;
 
     new File(dir).mkdir();
