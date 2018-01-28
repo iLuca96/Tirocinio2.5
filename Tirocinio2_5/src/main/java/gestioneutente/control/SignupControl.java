@@ -190,7 +190,7 @@ public class SignupControl extends HttpServlet {
    *     il parametro passato non è una username valida, true altrimenti.
   */
   public boolean validateUsername(String username) {
-    Pattern pattern = Pattern.compile("[a-zA-Z0-9]");
+    Pattern pattern = Pattern.compile("[a-zA-Z0-9]+$");
     Matcher matcher = pattern.matcher(username);
 
     if (matcher.matches()) {

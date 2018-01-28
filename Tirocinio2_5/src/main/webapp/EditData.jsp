@@ -102,7 +102,7 @@
 		 session.removeAttribute("editdata_fault");
 		 session.removeAttribute("email_not_valid");
 		 session.removeAttribute("email_not_ok");
-		 
+		 session.removeAttribute("username_not_valid");
 		 %> 
     
         

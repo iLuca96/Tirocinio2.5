@@ -39,15 +39,17 @@
 			</div>
 		<%
 		}
+		
 		if(session.getAttribute("username_not_valid")!=null)
-		   {
+		{
 		%>
 			<div class="alert alert-danger">
 			    <strong>Spiacenti! </strong> <%=session.getAttribute("username_not_valid")%> 
 			</div>
 		
 		<%  
-		   }  
+		} 
+		
 		if(session.getAttribute("not_equals")!=null)
 		   {
 		%>
@@ -99,7 +101,7 @@
 		 session.removeAttribute("matricola_vuota");
 		 session.removeAttribute("register_fault");
 		 session.removeAttribute("email_not_valid");
-		 
+		 session.removeAttribute("username_not_valid");
 		 %> 
     
         
