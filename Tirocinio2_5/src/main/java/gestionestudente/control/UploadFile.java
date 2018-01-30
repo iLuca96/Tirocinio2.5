@@ -5,6 +5,8 @@ import gestionestudente.model.StudenteModel;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.RequestDispatcher;
 
@@ -54,27 +56,34 @@ public class UploadFile extends HttpServlet {
         String dir = null;
         String action = null;
         String filePdf = null;
+        String name = null;
         int i = 0;
 
         for (FileItem item : multiparts) {
           if (!item.isFormField()) {
-            String name = new File(item.getName()).getName();
-  
-            if (sessioneStudent != null && i == 0) {
-              sessioneStudent.setMatricola(sessioneStudent.getMatricola().replaceAll("^\\s+", ""));
-              sessioneStudent.setMatricola(sessioneStudent.getMatricola().replaceAll("\\s+$", ""));
-              nameFolder = 
+            name = new File(item.getName()).getName();
+            
+            if (validateNomeFile(name)) {
+              if (sessioneStudent != null && i == 0) {
+                sessioneStudent.setMatricola(sessioneStudent.getMatricola()
+                     .replaceAll("^\\s+", ""));
+                sessioneStudent.setMatricola(sessioneStudent.getMatricola()
+                     .replaceAll("\\s+$", ""));
+                nameFolder = 
                     folder(sessioneStudent.getMatricola(),sessioneStudent.getMatricola().length());
-              dir = creaDir(nameFolder);
-              i = 1;
-            }
+                dir = creaDir(nameFolder);
+                i = 1;
+              }
 
-            if (filePdf == null) {
-              filePdf = "/Tirocinio2.5/Users/Students/" + nameFolder + "/" + name;
+              if (filePdf == null) {
+                filePdf = "/Tirocinio2.5/Users/Students/" + nameFolder + "/" + name;
+              } else {
+                filePdf = filePdf + nameFolder + "/" + name;
+              }
+              item.write(new File(dir + File.separator + name));
             } else {
-              filePdf = filePdf + nameFolder + "/" + name;
+              request.setAttribute("filenotsupported", "File non caricato formato diverso da pdf.");
             }
-            item.write(new File(dir + File.separator + name));
           } else {
             if ("action".equals(item.getFieldName())) {
               action = item.getString();
@@ -82,16 +91,18 @@ public class UploadFile extends HttpServlet {
           }
         }
 
-        if (action.equalsIgnoreCase("insert_curriculum")) {
+        if (validateNomeFile(name)) {
+          if (action.equalsIgnoreCase("insert_curriculum")) {
 
-          Studente bean = new Studente();
-          bean.setLink_curriculum(filePdf);
-          bean.setMatricola(sessioneStudent.getMatricola());
-          model.doModifyCurriculum(bean);
+            Studente bean = new Studente();
+            bean.setLink_curriculum(filePdf);
+            bean.setMatricola(sessioneStudent.getMatricola());
+            model.doModifyCurriculum(bean);
 
-          request.getSession().setAttribute("student", 
+            request.getSession().setAttribute("student", 
                  model.doRetrieveByKey(sessioneStudent.getMatricola()));
-          request.setAttribute("message_success", "Curriculum inserito con successo.");
+            request.setAttribute("message_success", "Curriculum inserito con successo.");
+          }
         }
       } catch (Exception ex) {
         request.setAttribute("message_danger", "File upload failed due to : " + ex);
@@ -141,5 +152,24 @@ public class UploadFile extends HttpServlet {
 
     new File(dir).mkdir();
     return dir;
+  }
+  
+  /**
+   * Il metodo confronta il nome del file con una espressione 
+   * regolare, per verificare se la variabile passata è un formato giusto.
+   * @param nomeFile tipo String, Variabile che viene cofrontata 
+   *     con le espressioni regolari per verificare se  è un formato giusto
+   * @return true/false valore boolean che se è false allora 
+   *     il parametro passato non è  è un formato giusto, true altrimenti.
+  */
+  public boolean validateNomeFile(String nomeFile) {
+    Pattern pattern = Pattern.compile("[a-zA-Z0-9._%-]+\\.(pdf)");
+    Matcher matcher = pattern.matcher(nomeFile);
+
+    if (matcher.matches()) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }

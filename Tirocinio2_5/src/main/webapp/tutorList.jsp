@@ -94,7 +94,7 @@ Collection<?> teachers = professoreModel.doRetrieveAllTutor("");
 					            <div class="well well-sm">
 					                <div class="row">
 					                    <div class="col-xs-3 col-md-3 text-center">
-					                        <img src="<%=teacher.getImmagine_profilo()%>" alt="immagine del profilo" class="img-rounded img-responsive" />
+					                        <img src="<%=teacher.getImmagine_profilo()%>" style="width:100%;width:180px;height:180px;" alt="immagine del profilo" class="img-rounded img-responsive" />
 					                    </div>
 					                    <div class="col-xs-9 col-md-9 section-box">
 					                        <h3>

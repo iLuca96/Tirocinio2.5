@@ -51,7 +51,18 @@
 		%> 
 		
 		<div class="alert alert-danger">
-	      <strong>Sorry!</strong> <%=request.getAttribute("message_danger") %>
+	      <strong>Spiacenti!</strong> <%=request.getAttribute("message_danger") %>
+		</div>
+		
+	  <%
+	}
+	
+	if(request.getAttribute("login_not_valid")!=null)
+	{
+		%> 
+		
+		<div class="alert alert-danger">
+	      <strong>Spiacenti!</strong> <%=request.getAttribute("login_not_valid") %>
 		</div>
 		
 	  <%
@@ -71,7 +82,7 @@
 		 if(sessione_student.getEmail().length()==0)
 		 { %> 
 			<div class="alert alert-danger">
-		      <strong>Spiacenti!</strong> Login come Studente Errato. Email o password errati.
+		      <strong>Spiacenti!</strong> Login come Studente Errato. Email/Username o password errati.
 			</div>
 			
 		  <%
@@ -96,7 +107,7 @@
 		 if(sessione_teacher.getEmail().length()==0)
 		 { %> 
 			<div class="alert alert-danger">
-		      <strong>Spiacenti!</strong> Login come Professore Errato. Email o password errati.
+		      <strong>Spiacenti!</strong> Login come Professore Errato. Email/Username o password errati.
 			</div>
 			
 		  <%
@@ -121,7 +132,7 @@
 		 if(sessione_tutor.getEmail().length()==0)
 		 { %> 
 			<div class="alert alert-danger">
-		      <strong>Spiacenti!</strong> Login come Tutor Aziendale Errato. Email o password errati.
+		      <strong>Spiacenti!</strong> Login come Tutor Aziendale Errato. Email/Username o password errati.
 			</div>
 		  <%
 		}
@@ -146,7 +157,7 @@
 		 if(sessione_segreteria.getEmail().length()==0)
 		 { %> 
 			<div class="alert alert-danger">
-		      <strong>Spiacenti!</strong> Login come Segreteria Errato. Email o password errati.
+		      <strong>Spiacenti!</strong> Login come Segreteria Errato. Email/Username o password errati.
 			</div>
 		  <%
 		}

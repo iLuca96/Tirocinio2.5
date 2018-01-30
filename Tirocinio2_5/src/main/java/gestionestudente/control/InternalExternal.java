@@ -7,6 +7,9 @@ import gestioneutente.model.Tirocinio;
 import gestioneutente.model.TirocinioModel;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -123,5 +126,43 @@ public class InternalExternal extends HttpServlet {
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
     doGet(request, response);
+  }
+  
+  /**
+   * Il metodo confronta la username o la matricola passata con una espressione 
+   * regolare, per verificare se la variabile passata è una username o matricola valida.
+   * @param userMatr tipo String, Variabile che viene cofrontata 
+   *     con le espressioni regolari per verificare se è una username o matricola valida
+   * @return true/false valore boolean che se è false allora 
+   *     il parametro passato non è una username o matricola valida, true altrimenti.
+  */
+  public boolean validateUsername_Matricola(String userMatr) {
+    Pattern pattern = Pattern.compile("[a-zA-Z0-9]+$");
+    Matcher matcher = pattern.matcher(userMatr);
+
+    if (matcher.matches()) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  
+  /**
+   * Il metodo confronta l'email passata con una espressione regolare, 
+   * per verificare se la variabile passata è una email valida per professore.
+   * @param email tipo Boolean, Variabile che viene cofrontata con 
+   *     le espressioni regolari per verificare se è una email valida per professore
+   * @return true/false valore boolean che se è false allora 
+   *     il parametro passato non è una email valida, true altrimenti.
+   */
+  public boolean isTeacher(String email) {
+    Pattern pattern = Pattern.compile("[a-zA-Z0-9._%-]+@[unisa]+\\.[a-zA-Z]{2,4}");
+    Matcher matcher = pattern.matcher(email);
+
+    if (matcher.matches()) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }

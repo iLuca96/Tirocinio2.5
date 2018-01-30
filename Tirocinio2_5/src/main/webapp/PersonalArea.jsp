@@ -34,13 +34,18 @@
 			        <strong>Complimenti!</strong> <%=request.getAttribute("message_success")%>
 			      </div>
 		      <%} 
-		      if(request.getAttribute("message_danger")!=null)
+		      if(request.getAttribute("message_danger")!=null && request.getAttribute("filenotsupported")==null)
 		      {%>
 			      <div class="alert alert-danger">
 			        <strong>Spiacenti!</strong> Seleziona un file da caricare!
 			      </div>
 		      <%}
-		      
+		      if(request.getAttribute("filenotsupported")!=null)
+		      {%>
+			      <div class="alert alert-danger">
+			        <strong>Spiacenti!</strong> <%=request.getAttribute("filenotsupported") %>
+			      </div>
+		      <%}
 		      if(request.getAttribute("session_training")!=null) 
 		      {%>
 			      <div class="alert alert-success">

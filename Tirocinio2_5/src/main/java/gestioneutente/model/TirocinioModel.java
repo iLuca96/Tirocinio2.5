@@ -157,6 +157,54 @@ public class TirocinioModel {
   }
 
   /**
+   * Il metodo doRetrieveByKeyStudent restituisce informazioni su un Tirconio in base al suo id.
+   * @param id tipo String, variabile che contiente un 
+   *     possibile riferimento ad una tupla in un DataBase
+   * @return bean tipo Tirocinio, variabile che ci da accesso a tutti i metodi set e get.
+   * @throws SQLException eccezione che viene lanciata quando viene 
+   *     rilevato un errore nell'esecuzione di una query.
+  */
+  public synchronized Tirocinio doRetrieveByKeyStudent(int id) throws SQLException {
+    Connection connection = null;
+    PreparedStatement preparedStatement = null;
+
+    Tirocinio bean = new Tirocinio();
+
+    String selectSql = "select * from " + TirocinioModel.TABLE_NAME + ", "
+          + "studente where studente.matricola=tirocinio.matricolastudente AND id = ?";
+
+    try {
+      connection = ds.getConnection();
+      preparedStatement = connection.prepareStatement(selectSql);
+      preparedStatement.setInt(1, id);
+
+      ResultSet rs = preparedStatement.executeQuery();
+
+      while (rs.next()) {
+        bean.setId(rs.getInt("id"));
+        bean.setStato(rs.getString("Stato"));
+        bean.setTipo(rs.getString("Tipo"));
+        bean.setMatricola_studente(rs.getString("MatricolaStudente"));
+        bean.setSegreteria_username(rs.getString("SegreteriaUsername"));
+        bean.setTutor_username(rs.getString("TutorUsername"));
+        bean.setNomeCognomeStudent(rs.getString("nome") + " " + rs.getString("cognome"));
+      }
+
+    } finally {
+      try {
+        if (preparedStatement != null) {
+          preparedStatement.close();
+        }
+      } finally {
+        if (connection != null) {
+          connection.close();
+        }
+      }
+    }
+    return bean;
+  }
+  
+  /**
    * Il Metodo doDelete, cancella una tupla nel database in base al suo id.
    * @param id tipo String, variabile che contiente un possibile 
    *     riferimento ad una tupla in un DataBase

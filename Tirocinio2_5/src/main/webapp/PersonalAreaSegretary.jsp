@@ -64,7 +64,7 @@
 			  &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
 			  
 			  <button onclick="QuestionsTraining()" style="width:180px; height:70px" class="btn btn-warning">Domande Tirocini</button> &ensp;&ensp;&ensp;&ensp;&ensp;
-			  <button onclick="CompletedTraining()" style="width:180px; height:70px" class="btn btn-danger">Tirocini Completato</button> 	<br><br> &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;		 
+			  <button onclick="CompletedTraining()" style="width:180px; height:70px" class="btn btn-danger">Tirocini Completati</button> 	<br><br> &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;		 
 			  <button onclick="CreateProfile()" style="width:180px; height:70px" class="btn btn-success">Domande Tirocini <br>Precedenti</button> &ensp;&ensp;&ensp;&ensp;&ensp;
 			  <button onclick="ConvalidateTraining()" style="width:180px; height:70px" class="btn btn-success">Tirocini Convalidati</button>
 			  

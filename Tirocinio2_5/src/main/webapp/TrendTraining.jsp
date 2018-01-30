@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8" import="java.util.*,gestioneprofessoretutoraziendale.model.ProfessoreTutorAziendale,gestioneutente.model.AndamentoModel,gestioneutente.model.Andamento,gestioneutente.model.Time,gestioneutente.model.TirocinioModel"%>
+    pageEncoding="UTF-8" import="java.util.*,gestioneprofessoretutoraziendale.model.ProfessoreTutorAziendale,gestioneutente.model.AndamentoModel,gestioneutente.model.Andamento,gestioneutente.model.Time,gestioneutente.model.TirocinioModel,gestioneutente.model.Tirocinio"%>
     
 <html>
 <head>
@@ -22,6 +22,10 @@
 	AndamentoModel andamentoModel;
 	
 	andamentoModel = new AndamentoModel();
+	
+    TirocinioModel tirocinioModel;
+	
+    tirocinioModel = new TirocinioModel();
 	
 	//Tirocinio tirocinio = (Tirocinio) request.getAttribute("order");
 	
@@ -62,6 +66,31 @@
 				%> 
 				<div class="alert alert-danger">
 			      <strong> <%=request.getAttribute("message_fault_training") %> </strong>
+				</div>
+			  <%
+			}
+			if(request.getAttribute("Data_not_valid")!=null)
+			{
+				%> 
+				<div class="alert alert-danger">
+			      <strong> <%=request.getAttribute("Data_not_valid") %> </strong>
+				</div>
+			  <%
+			}
+			if(request.getAttribute("oraInizio_not_valid")!=null)
+			{
+				%> 
+				<div class="alert alert-danger">
+			      <strong> <%=request.getAttribute("oraInizio_not_valid") %> </strong>
+				</div>
+			  <%
+			}
+			
+			if(request.getAttribute("oraFine_not_valid")!=null)
+			{
+				%> 
+				<div class="alert alert-danger">
+			      <strong> <%=request.getAttribute("oraFine_not_valid") %> </strong>
 				</div>
 			  <%
 			}
@@ -198,7 +227,7 @@
                             	 
                             	 if(hours<=0)
                             	 {
-                            		 TirocinioModel tirocinioModel = new TirocinioModel();
+                            		 tirocinioModel = new TirocinioModel();
                             		 tirocinioModel.doModify("Completato",idTirocinio);
                             	 }
                             	 
@@ -208,7 +237,11 @@
                             <%
 							}
 							else
-							{%>
+							{
+								request.setAttribute("trend", tirocinioModel.doRetrieveByKeyStudent(id_int));
+								Tirocinio tirocinio = (Tirocinio) request.getAttribute("trend");
+							%>
+							    <script> document.getElementById("nomecognome").innerHTML = "<%=tirocinio.getNomeCognomeStudent()%>"; </script>
 								Andamento non Disponibile riprovare più tardi.
 								<a href="PersonalAreaTutorProfessore.jsp">Area Riservata</a>
 							<%}%>

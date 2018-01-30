@@ -57,8 +57,6 @@ public class ProfileControl extends HttpServlet {
         String nameFolder = null;
         String dir = null;
         String imageProfile = null;
-        String nome = null;
-        String cognome = null;
         String company = null;
         String indirizzo = null;
         String telefono = null;
@@ -116,14 +114,6 @@ public class ProfileControl extends HttpServlet {
               action = item.getString();
             }
 
-            if ("first_name".equals(item.getFieldName())) {
-              nome = item.getString();
-            }
-
-            if ("last_name".equals(item.getFieldName())) {
-              cognome = item.getString();
-            }
-
             if ("company".equals(item.getFieldName())) {
               company = item.getString();
             }
@@ -159,69 +149,79 @@ public class ProfileControl extends HttpServlet {
         }
 
         if (action.equalsIgnoreCase("createProfile") || action.equalsIgnoreCase("EditProfile")) {
-
-          if (validateEmail(email)) {
-            if (validateTelFax(fax)) {
-              if (validateTelFax(telefono)) {
-                ProfessoreTutorAziendale bean = new ProfessoreTutorAziendale();
-                bean.setNome(nome);
-                bean.setCognome(cognome);
-                if (sessioneTeacher != null) {
-                  bean.setTipo("Professore");
-                  bean.setUsername(sessioneTeacher.getUsername());
-                }
-            
-                if (sessioneTutor != null) {
-                  bean.setTipo("Tutor Aziendale");
-                  bean.setUsername(sessioneTutor.getUsername());
-                }
-                bean.setCompany(company);
-                bean.setIndirizzo(indirizzo);
-                bean.setTelefono(telefono);
-                bean.setFax(fax);
-                bean.setEmail(email);
-                bean.setCitta(luogo);
-                bean.setSitoweb(sitoweb);
-                bean.setChisono(chisono);
-                bean.setImmagine_profilo(imageProfile);
-                Tutormodel.doModifyProfile(bean);
-
-                if (action.equalsIgnoreCase("EditProfile")) {
-                  request.setAttribute("message_success_profile", ""
-                      + "Profilo Modificato con successo.");
-                  return_path = "/EditProfile.jsp";
-                } else {
-                  request.setAttribute("message_success_profile", "Profilo Creato con successo.");
-                }
-
-                if (sessioneTeacher != null) {
-                  request.getSession().setAttribute("teacher", Tutormodel
-                      .doRetrieveByKey(sessioneTeacher.getUsername()));
-                }
-                if (sessioneTutor != null) {
-                  request.getSession().setAttribute("tutor", Tutormodel
-                      .doRetrieveByKey(sessioneTutor.getUsername()));
-                }
-              } else {
-                request.setAttribute("telefono_not_valid_profile", ""
-                    + "Numero di telefono inserito non valido.");
-                if (action.equalsIgnoreCase("EditProfile")) {
-                  return_path = "/EditProfile.jsp";
-                }
-              }
-            } else {
-              request.setAttribute("fax_not_valid_profile", ""
-                  + "Numero del fax inserito non valido.");
-              if (action.equalsIgnoreCase("EditProfile")) {
-                return_path = "/EditProfile.jsp";
-              }
-            } 
-          } else {
+          boolean control = true;
+          
+          if (!validateEmail(email)) {
             request.setAttribute("email_not_valid_profile", ""
                 + "Email inserita non valida.");
-            if (action.equalsIgnoreCase("EditProfile")) {
-              return_path = "/EditProfile.jsp";
+            control = false;
+          }
+          
+          if (!validateTelFax(fax)) {
+            request.setAttribute("fax_not_valid_profile", ""
+                + "Numero del fax inserito non valido.");
+            control = false;
+          }
+          
+          if (!validateTelFax(telefono)) {
+            request.setAttribute("telefono_not_valid_profile", ""
+                + "Numero di telefono inserito non valido.");
+            control = false;
+          }
+          
+          if (!validateLuogo(luogo)) {
+            request.setAttribute("luogo_not_valid_profile", ""
+                + "Luogo inserito non valido. = " + luogo);
+            control = false;
+          }
+          
+          if (!validateCompany(company)) {
+            request.setAttribute("company_not_valid_upload", ""
+                      + "Il campo company non è valido, deve avere solo numeri o caratteri o (&).");
+            control = false;
+          }
+          
+          if (control) {
+            ProfessoreTutorAziendale bean = new ProfessoreTutorAziendale();
+            if (sessioneTeacher != null) {
+              bean.setTipo("Professore");
+              bean.setUsername(sessioneTeacher.getUsername());
             }
+            
+            if (sessioneTutor != null) {
+              bean.setTipo("Tutor Aziendale");
+              bean.setUsername(sessioneTutor.getUsername());
+            }
+            bean.setCompany(company);
+            bean.setIndirizzo(indirizzo);
+            bean.setTelefono(telefono);
+            bean.setFax(fax);
+            bean.setEmail(email);
+            bean.setCitta(luogo);
+            bean.setSitoweb(sitoweb);
+            bean.setChisono(chisono);
+            bean.setImmagine_profilo(imageProfile);
+            Tutormodel.doModifyProfile(bean);
+            if (action.equalsIgnoreCase("EditProfile")) {
+              request.setAttribute("message_success_profile", ""
+                  + "Profilo Modificato con successo.");
+              return_path = "/EditProfile.jsp";
+            } else {
+              request.setAttribute("message_success_profile", "Profilo Creato con successo.");
+            }
+
+            if (sessioneTeacher != null) {
+              request.getSession().setAttribute("teacher", Tutormodel
+                  .doRetrieveByKey(sessioneTeacher.getUsername()));
+            }
+            if (sessioneTutor != null) {
+              request.getSession().setAttribute("tutor", Tutormodel
+                  .doRetrieveByKey(sessioneTutor.getUsername()));
+            }
+          } 
+                
+          if (action.equalsIgnoreCase("EditProfile")) {
+            return_path = "/EditProfile.jsp";
           }
         }
       } catch (Exception ex) {
@@ -273,7 +273,7 @@ public class ProfileControl extends HttpServlet {
 
     //String Dir = "C:/Users/Luca/Desktop/progetto IS/git/Tirocinio2_5/
     //src/main/webapp/Users/TeacherTutor;
-    String dir = "C:/apache-tomcat-9.0.0.M17/webapps/Tirocinio2.5/Users/TeacherTutor/" + nameFolder;
+    String dir = "C:/apache-tomcat-8.5.11/webapps/Tirocinio2.5/Users/TeacherTutor/" + nameFolder;
 
     new File(dir).mkdir();
     return dir;
@@ -288,8 +288,27 @@ public class ProfileControl extends HttpServlet {
   *     parametro passato non è una email valida, true altrimenti.
  */
   public boolean validateEmail(String email) {
-    Pattern pattern = Pattern.compile("[a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}");
+    Pattern pattern = Pattern.compile("[a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}+$");
     Matcher matcher = pattern.matcher(email);
+
+    if (matcher.matches()) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  
+  /**
+   * Il metodo confronta il luogo passato con una espressione regolare,
+   *  per verificare se la variabile passata è un luogo valido.
+   * @param luogo tipo Boolean, Variabile che viene cofrontata 
+   *     con le espressioni regolari per verificare se è un luogo valido
+   * @return true/false valore boolean che se è false allora il 
+   *     parametro passato non è un luogo valido, true altrimenti.
+  */
+  public boolean validateLuogo(String luogo) {
+    Pattern pattern = Pattern.compile("[a-zA-Z0-9' ()]+$");
+    Matcher matcher = pattern.matcher(luogo);
 
     if (matcher.matches()) {
       return true;
@@ -307,9 +326,27 @@ public class ProfileControl extends HttpServlet {
   *     parametro passato non è un numero valido, true altrimenti.
  */
   public boolean validateTelFax(String numero) {
-    Pattern pattern = Pattern.compile("(\\((00|\\+)39\\)|(00|\\+)39)?"
-        + "(38[890]|34[7-90]|36[680]|33[3-90]|32[89])\\d{7}$");
+    Pattern pattern = Pattern.compile("[0-9+]+$");
     Matcher matcher = pattern.matcher(numero);
+
+    if (matcher.matches()) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  
+  /**
+   * Il metodo confronta l'azienda passata con una espressione 
+   * regolare, per verificare se la variabile passata è un formato giusto.
+   * @param company tipo String, Variabile che viene cofrontata 
+   *     con le espressioni regolari per verificare se è un formato giusto
+   * @return true/false valore boolean che se è false allora 
+   *     il parametro passato non è un formato giusto., true altrimenti.
+  */
+  public boolean validateCompany(String company) {
+    Pattern pattern = Pattern.compile("[a-zA-Z0-9.& ]+$");
+    Matcher matcher = pattern.matcher(company);
 
     if (matcher.matches()) {
       return true;

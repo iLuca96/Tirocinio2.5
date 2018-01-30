@@ -80,63 +80,82 @@ public class SignupControl extends HttpServlet {
           HttpSession session = request.getSession();
 
           String email = request.getParameter("email");
-
-          if (validateEmail(email)) {
-            if (validateUsername(username)) {
-              if (isStudent(email)) {
-                if (matricola == "") {
-                  session.setAttribute("matricola_vuota", "Sei uno "
-                      + "studente, la matricola è necessaria!");
-                } else {
-                  Studente bean = new Studente();
-                  bean.setMatricola(matricola);
-                  bean.setNome(firstName);
-                  bean.setCognome(lastName);
-                  bean.setEmail(email);
-                  bean.setUsername(username);
-                  bean.setPsw(psw);
-                  model.doSave(bean);
-
-                  session.setAttribute("register_completed", email);
-                  session.setAttribute("register_completed_as_student_tutor_teacher", ""
-                      + "uno Studente");
-                }
-              } else {
-                if (isTeacher(email)) {
-                  ProfessoreTutorAziendale bean = new ProfessoreTutorAziendale();
-                  bean.setTipo("Professore");
-                  bean.setNome(firstName);
-                  bean.setCognome(lastName);
-                  bean.setEmail(email);
-                  bean.setUsername(username);
-                  bean.setPsw(psw);
-                  Tutormodel.doSave(bean);
-
-                  session.setAttribute("register_completed", email);
-                  session.setAttribute("register_completed_as_student_"
-                      + "tutor_teacher", "un Professore");
-                } else {
-                  ProfessoreTutorAziendale bean = new ProfessoreTutorAziendale();
-                  bean.setTipo("Tutor Aziendale");
-                  bean.setNome(firstName);
-                  bean.setCognome(lastName);
-                  bean.setEmail(email);
-                  bean.setUsername(username);
-                  bean.setPsw(psw);
-                  Tutormodel.doSave(bean);
-
-                  session.setAttribute("register_completed", email);
-                  session.setAttribute("register_completed_as_student"
-                      + "_tutor_teacher", "un Tutor Aziendale");
-                }
-              }
-            } else {
-              session.setAttribute("username_not_valid", "Username "
-                  + "inserita \"" + username + "\" NON è valida!");
-            }
-          } else {
+          
+          boolean control = true;
+          
+          if (!validateEmail(email)) {
             session.setAttribute("email_not_valid", "Email "
                 + "inserita \"" + email + "\" NON è valida!");
+            control = false;
+          }
+          
+          if (!validateUsername_Matricola(username)) {
+            session.setAttribute("username_not_valid", "Username "
+                + "inserita \"" + username + "\" NON è valida!");
+            control = false;
+          }
+          
+          if (!validateNomeCognome(firstName)) {
+            session.setAttribute("firstname_not_valid", "Nome "
+                      + "inserito \"" + firstName + "\" NON è valido!");
+            control = false;
+          }
+            
+          if (!validateNomeCognome(lastName)) {
+            session.setAttribute("lastname_not_valid", "Cognome "
+                     + "inserito \"" + lastName + "\" NON è valido!");
+            control = false;
+          }
+            
+          if (control) {
+            if (isStudent(email)) {
+              if (matricola == "") {
+                session.setAttribute("matricola_vuota", "Sei uno "
+                    + "studente, la matricola è necessaria!");
+              } else if (validateUsername_Matricola(matricola)) {
+                Studente bean = new Studente();
+                bean.setMatricola(matricola);
+                bean.setNome(firstName);
+                bean.setCognome(lastName);
+                bean.setEmail(email);
+                bean.setUsername(username);
+                bean.setPsw(psw);
+                model.doSave(bean);
+
+                session.setAttribute("register_completed", email);
+                session.setAttribute("register_completed_as_student_tutor_teacher", ""
+                    + "uno Studente");
+              } else {
+                session.setAttribute("matricola_not_valid", "Matricola "
+                    + "inserita \"" + matricola + "\" NON è valida!");
+              }
+            } else {
+              if (isTeacher(email)) {
+                ProfessoreTutorAziendale bean = new ProfessoreTutorAziendale();
+                bean.setTipo("Professore");
+                bean.setNome(firstName);
+                bean.setCognome(lastName);
+                bean.setEmail(email);
+                bean.setUsername(username);
+                bean.setPsw(psw);
+                Tutormodel.doSave(bean);
+                session.setAttribute("register_completed", email);
+                session.setAttribute("register_completed_as_student_"
+                    + "tutor_teacher", "un Professore");
+              } else {
+                ProfessoreTutorAziendale bean = new ProfessoreTutorAziendale();
+                bean.setTipo("Tutor Aziendale");
+                bean.setNome(firstName);
+                bean.setCognome(lastName);
+                bean.setEmail(email);
+                bean.setUsername(username);
+                bean.setPsw(psw);
+                Tutormodel.doSave(bean);
+                session.setAttribute("register_completed", email);
+                session.setAttribute("register_completed_as_student"
+                    + "_tutor_teacher", "un Tutor Aziendale");
+              }
+            }
           }
         }
       }
@@ -182,16 +201,35 @@ public class SignupControl extends HttpServlet {
   }
 
   /**
-   * Il metodo confronta la username passata con una espressione 
-   * regolare, per verificare se la variabile passata è una username valida.
-   * @param username tipo String, Variabile che viene cofrontata 
-   *     con le espressioni regolari per verificare se è una username valida
+   * Il metodo confronta la username o la matricola passata con una espressione 
+   * regolare, per verificare se la variabile passata è una username o matricola valida.
+   * @param userMatr tipo String, Variabile che viene cofrontata 
+   *     con le espressioni regolari per verificare se è una username o matricola valida
    * @return true/false valore boolean che se è false allora 
-   *     il parametro passato non è una username valida, true altrimenti.
+   *     il parametro passato non è una username o matricola valida, true altrimenti.
   */
-  public boolean validateUsername(String username) {
+  public boolean validateUsername_Matricola(String userMatr) {
     Pattern pattern = Pattern.compile("[a-zA-Z0-9]+$");
-    Matcher matcher = pattern.matcher(username);
+    Matcher matcher = pattern.matcher(userMatr);
+
+    if (matcher.matches()) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  
+  /**
+   * Il metodo confronta il nome/cognome passato con una espressione 
+   * regolare, per verificare se la variabile passata è un nome/congnome valido.
+   * @param nome tipo String, Variabile che viene cofrontata 
+   *     con le espressioni regolari per verificare se è una nome/congnome valido
+   * @return true/false valore boolean che se è false allora 
+   *     il parametro passato non è nome/congnome valido, true altrimenti.
+  */
+  public boolean validateNomeCognome(String nome) {
+    Pattern pattern = Pattern.compile("[a-zA-Z ']+$");
+    Matcher matcher = pattern.matcher(nome);
 
     if (matcher.matches()) {
       return true;

@@ -6,6 +6,8 @@ import gestioneutente.model.AndamentoModel;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -63,7 +65,7 @@ public class AndamentoControl extends HttpServlet {
               control = true;
             }
           }
-
+          
           if (control) {
             String id = request.getParameter("id");
             int idInt = Integer.parseInt(id);
@@ -73,17 +75,39 @@ public class AndamentoControl extends HttpServlet {
             String oraFine = request.getParameter("ora_fine");
 
             if (id != null) {
-              andamentoModel = new AndamentoModel();
+            
+              boolean controllo = true;
 
-              Andamento bean = new Andamento();
-              bean.setDataT(data);
-              bean.setOra_inizio(oraInizio);
-              bean.setOra_fine(oraFine);
-              bean.setTirocinioId(idInt);
-              andamentoModel.doSave(bean);
+              if (!validateOreSvolte(oraInizio)) {
+                request.setAttribute("oraInizio_not_valid", ""
+                          + "Il campo ora inizio non è valido, deve essere di tipo \"15:00\".");
+                controllo = false;
+              }
+                
+              if (!validateOreSvolte(oraFine)) {
+                request.setAttribute("oraFine_not_valid", ""
+                            + "Il campo ora fine non è valido, deve essere di tipo \"15:00\".");
+                controllo = false;
+              }
+              
+              if (!validateData(data)) {
+                request.setAttribute("Data_not_valid", ""
+                              + "Il campo data non è valido, deve essere di tipo \"aaaa-mm-gg\".");
+                controllo = false;
+              }
+              
+              if (controllo) {
+                andamentoModel = new AndamentoModel();
 
-              request.setAttribute("message_success_training", "Ore di lavoro Aggiunte.");
+                Andamento bean = new Andamento();
+                bean.setDataT(data);
+                bean.setOra_inizio(oraInizio);
+                bean.setOra_fine(oraFine);
+                bean.setTirocinioId(idInt);
+                andamentoModel.doSave(bean);
 
+                request.setAttribute("message_success_training", "Ore di lavoro Aggiunte.");
+              }
               return_path = "/TrendTraining.jsp";
             }
           }
@@ -113,19 +137,41 @@ public class AndamentoControl extends HttpServlet {
             String data = request.getParameter("data");
             String oraInizio = request.getParameter("ora_inizio");
             String oraFine = request.getParameter("ora_fine");
-             
+            
             if (id != null) {
-              andamentoModel = new AndamentoModel();
-              Andamento bean = new Andamento();
-              bean.setId(idInt);
-              bean.setDataT(data);
-              bean.setOra_inizio(oraInizio);
-              bean.setOra_fine(oraFine);
-              bean.setTirocinioId(idInt);
-              andamentoModel.doModify(bean);
+              
+              boolean controllo = true;
 
-              request.setAttribute("message_success_training", "Ore di lavoro Modificate.");
+              if (!validateOreSvolte(oraInizio)) {
+                request.setAttribute("oraInizio_not_valid", ""
+                        + "Il campo ora inizio non è valido, deve essere di tipo \"15:00\".");
+                controllo = false;
+              }
+              
+              if (!validateOreSvolte(oraFine)) {
+                request.setAttribute("oraFine_not_valid", ""
+                          + "Il campo ora fine non è valido, deve essere di tipo \"15:00\".");
+                controllo = false;
+              }
+              
+              if (!validateData(data)) {
+                request.setAttribute("Data_not_valid", ""
+                            + "Il campo data non è valido, deve essere di tipo \"aaaa-mm-gg\".");
+                controllo = false;
+              }
+              
+              if (controllo) {
+                andamentoModel = new AndamentoModel();
+                Andamento bean = new Andamento();
+                bean.setId(idInt);
+                bean.setDataT(data);
+                bean.setOra_inizio(oraInizio);
+                bean.setOra_fine(oraFine);
+                bean.setTirocinioId(idInt);
+                andamentoModel.doModify(bean);
 
+                request.setAttribute("message_success_training", "Ore di lavoro Modificate.");
+              }
               return_path = "/ModifyTimeTrend.jsp";
             }
           }
@@ -146,5 +192,43 @@ public class AndamentoControl extends HttpServlet {
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     doGet(request, response);
+  }
+  
+  /**
+   * Il metodo confronta le ore svolte con una espressione 
+   * regolare, per verificare se la variabile passata è un formato giusto.
+   * @param oresvolte tipo String, Variabile che viene cofrontata 
+   *     con le espressioni regolari per verificare se  è un formato giusto
+   * @return true/false valore boolean che se è false allora 
+   *     il parametro passato non è  è un formato giusto, true altrimenti.
+  */
+  public boolean validateOreSvolte(String oresvolte) {
+    Pattern pattern = Pattern.compile("([0-1]\\d|2[0-3]):([0-5]\\d)+$");
+    Matcher matcher = pattern.matcher(oresvolte);
+
+    if (matcher.matches()) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  
+  /**
+   * Il metodo confronta la data inserita con una espressione 
+   * regolare, per verificare se la variabile passata è un formato giusto.
+   * @param data tipo String, Variabile che viene cofrontata 
+   *     con le espressioni regolari per verificare se  è un formato giusto
+   * @return true/false valore boolean che se è false allora 
+   *     il parametro passato non è  è un formato giusto, true altrimenti.
+  */
+  public boolean validateData(String data) {
+    Pattern pattern = Pattern.compile("([12]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))");
+    Matcher matcher = pattern.matcher(data);
+
+    if (matcher.matches()) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }

@@ -107,7 +107,6 @@ public class ProfessoreTutorAziendaleModel {
       preparedStatement.setString(5, professoreTutor.getUsername());
 
       result = preparedStatement.executeUpdate();
-
       connection.commit();
     } catch (SQLException e) {
 
@@ -145,7 +144,7 @@ public class ProfessoreTutorAziendaleModel {
     int result = 0;
 
     String insertSql = "UPDATE " + ProfessoreTutorAziendaleModel.TABLE_NAME 
-        + " SET Nome = ?, Cognome = ?, Tipo = ?, Company = ?, Indirizzo = ?, Telefono = ?, "
+        + " SET Tipo = ?, Company = ?, Indirizzo = ?, Telefono = ?, "
         + "Fax = ?, Email = ? , Citta = ?, SitoWeb = ?, ChiSono = ?, "
         + "Immagine_profilo = ? where Username = ?";
 
@@ -153,19 +152,17 @@ public class ProfessoreTutorAziendaleModel {
     try {
       connection = ds.getConnection();
       preparedStatement = connection.prepareStatement(insertSql);
-      preparedStatement.setString(1, professoreTutor.getNome());
-      preparedStatement.setString(2, professoreTutor.getCognome());
-      preparedStatement.setString(3, professoreTutor.getTipo());
-      preparedStatement.setString(4, professoreTutor.getCompany());
-      preparedStatement.setString(5, professoreTutor.getIndirizzo());
-      preparedStatement.setString(6, professoreTutor.getTelefono());
-      preparedStatement.setString(7, professoreTutor.getFax());
-      preparedStatement.setString(8, professoreTutor.getEmail());
-      preparedStatement.setString(9, professoreTutor.getCitta());
-      preparedStatement.setString(10, professoreTutor.getSitoweb());
-      preparedStatement.setString(11, professoreTutor.getChisono());
-      preparedStatement.setString(12, professoreTutor.getImmagine_profilo());
-      preparedStatement.setString(13, professoreTutor.getUsername());
+      preparedStatement.setString(1, professoreTutor.getTipo());
+      preparedStatement.setString(2, professoreTutor.getCompany());
+      preparedStatement.setString(3, professoreTutor.getIndirizzo());
+      preparedStatement.setString(4, professoreTutor.getTelefono());
+      preparedStatement.setString(5, professoreTutor.getFax());
+      preparedStatement.setString(6, professoreTutor.getEmail());
+      preparedStatement.setString(7, professoreTutor.getCitta());
+      preparedStatement.setString(8, professoreTutor.getSitoweb());
+      preparedStatement.setString(9, professoreTutor.getChisono());
+      preparedStatement.setString(10, professoreTutor.getImmagine_profilo());
+      preparedStatement.setString(11, professoreTutor.getUsername());
 
       result = preparedStatement.executeUpdate();
 
@@ -661,6 +658,76 @@ public class ProfessoreTutorAziendaleModel {
     }
     return bean;
   }
+  
+  /**
+   * Il metodo loginProfessore, interroga la tabella 
+   *     professore_tutoraziendale con combinazione email_username, psw.
+   * @param emailUser tipo String, variabile che 
+   *     viene utilizzata per l'interrogazione al DataBase.
+   * @param psw tipo String, variabile che viene 
+   *     utilizzata per l'interrogazione al DataBase.
+   * @return bean tipo ProfessoreTutorAziendale, variabile 
+   *     che ci da accesso a tutti i metodi set e get.
+   * @throws SQLException eccezione che viene lanciata quando 
+   *     viene rilevato un errore nell'esecuzione di una query.
+   */
+  public synchronized ProfessoreTutorAziendale loginProfessore(String emailUser, String psw) 
+       throws SQLException {
+    Connection connection = null;
+    PreparedStatement preparedStatement = null;
 
+    ProfessoreTutorAziendale bean = new ProfessoreTutorAziendale();
+
+    String selectSql = "SELECT * FROM " + ProfessoreTutorAziendaleModel.TABLE_NAME + " "
+         + "WHERE (Email = ? OR Username = ?) AND psw = ? AND tipo = ?";
+    try {
+      connection = ds.getConnection();
+      preparedStatement = connection.prepareStatement(selectSql);
+      preparedStatement.setString(1, emailUser);
+      preparedStatement.setString(2, emailUser);
+      preparedStatement.setString(3, psw);
+      preparedStatement.setString(4, "Professore");
+      ResultSet rs = preparedStatement.executeQuery();
+      int numeroRighe = 0;
+      if (rs.last()) {
+        // Riprendo il numero di righe
+        numeroRighe = rs.getRow();
+
+        // Torno alla posizione iniziale, prima della prima righa, 
+        //operazione non permessa con il ResultSet.TYPE_FORWARD_ONLY
+        rs.beforeFirst();
+      }
+
+      if (numeroRighe == 1) {
+        while (rs.next()) {
+          bean.setUsername(rs.getString("Username"));
+          bean.setNome(rs.getString("Nome"));
+          bean.setCognome(rs.getString("Cognome"));
+          bean.setTipo(rs.getString("Tipo"));
+          bean.setCompany(rs.getString("Company"));
+          bean.setIndirizzo(rs.getString("Indirizzo"));
+          bean.setTelefono(rs.getString("Telefono"));
+          bean.setFax(rs.getString("Fax"));
+          bean.setEmail(rs.getString("Email"));
+          //bean.setPsw(rs.getString("psw"));
+          bean.setCitta(rs.getString("Citta"));
+          bean.setSitoweb(rs.getString("SitoWeb"));
+          bean.setChisono(rs.getString("ChiSono"));
+          bean.setImmagine_profilo(rs.getString("Immagine_Profilo"));
+        }
+      }
+    } finally {
+      try {
+        if (preparedStatement != null) {
+          preparedStatement.close();
+        }
+      } finally {
+        if (connection != null) {
+          connection.close();
+        }
+      }
+    }
+    return bean;
+  }
 }
 

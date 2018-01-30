@@ -109,7 +109,7 @@ public class LoginControl extends HttpServlet {
                     
                     tutorModel = new ProfessoreTutorAziendaleModel();
                     request.getSession().setAttribute("teacher"
-                        + "", tutorModel.loginProfessoreTutor(email,psw));
+                        + "", tutorModel.loginProfessore(email,psw));
 
                     ProfessoreTutorAziendale sessioneTeacher =
                         (ProfessoreTutorAziendale) request.getSession().getAttribute("teacher");
@@ -127,6 +127,8 @@ public class LoginControl extends HttpServlet {
                         if (sessioneTutor != null) {
                           if (sessioneTutor.getEmail().length() <= 0) {
                             sessionLogin.removeAttribute("tutor");
+                            request.setAttribute("login_not_valid", 
+                                 "Login Errato. Email/Username o password errati.");
                           }
                         }
                       }

@@ -22,6 +22,31 @@
 			<div class="col-sm-3"> 
 			</div>
 			<div class="col-sm-5"> 
+			<%if(request.getAttribute("company_not_valid_upload")!=null)
+		      {%>
+			      <div class="alert alert-danger">
+			        <strong>Spiacenti!</strong><%=request.getAttribute("company_not_valid_upload")%>
+			      </div>
+		    <%}
+		      if(request.getAttribute("job_not_valid_upload")!=null)
+		      {%>
+			      <div class="alert alert-danger">
+			        <strong>Spiacenti!</strong><%=request.getAttribute("job_not_valid_upload")%>
+			      </div>
+		    <%}
+		      if(request.getAttribute("message_danger")!=null && request.getAttribute("filenotsupported")==null)
+		      {%>
+			      <div class="alert alert-danger">
+			        <strong>Spiacenti!</strong> Seleziona un file da caricare!
+			      </div>
+		      <%}
+		      if(request.getAttribute("filenotsupported")!=null)
+		      {%>
+			      <div class="alert alert-danger">
+			        <strong>Spiacenti!</strong> <%=request.getAttribute("filenotsupported") %>
+			      </div>
+		    <%}%>
+		    
 				<form action="oldTraining" method="post" enctype="multipart/form-data"> 
 				  	<input type="hidden" name="action" value="insert_old_training">
 					  

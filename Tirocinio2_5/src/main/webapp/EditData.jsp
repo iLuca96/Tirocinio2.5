@@ -50,6 +50,24 @@
 		
 		<%  
 		   } 
+		if(session.getAttribute("firstname_not_valid")!=null)
+		   {
+		%>
+			<div class="alert alert-danger">
+			    <strong>Spiacenti! </strong> <%=session.getAttribute("firstname_not_valid")%> 
+			</div>
+		
+		<%  
+		   }
+		if(session.getAttribute("lastname_not_valid")!=null)
+		   {
+		%>
+			<div class="alert alert-danger">
+			    <strong>Spiacenti! </strong> <%=session.getAttribute("lastname_not_valid")%> 
+			</div>
+		
+		<%  
+		   }
 		if(session.getAttribute("email_not_ok")!=null)
 		   {
 		%>
@@ -103,6 +121,8 @@
 		 session.removeAttribute("email_not_valid");
 		 session.removeAttribute("email_not_ok");
 		 session.removeAttribute("username_not_valid");
+		 session.removeAttribute("firstname_not_valid");
+		 session.removeAttribute("lastname_not_valid");
 		 %> 
     
         
@@ -140,7 +160,7 @@
 		    <% if(sessione_student!=null){%>
 		    <div class="form-group">
 		      <label for="matricola">Matricola:</label>
-		      <input type="text" maxlength="10" class="form-control" placeholder="Inserisci matricola" name="matricola" value="<%=sessione_student.getMatricola()%>">
+		      <input type="text" maxlength="10" readonly class="form-control" placeholder="Inserisci matricola" name="matricola" value="<%=sessione_student.getMatricola()%>">
 		    </div>
 		    <%}%>
 		    <button type="submit" value="Send" class="btn btn-success">Modifica </button> 
