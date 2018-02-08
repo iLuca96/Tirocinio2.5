@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * AndamentoControl è una classe che si occupa di
  * modificare/inserire la data e l'ora di un lavoro di uno studente.
- *
+ 
  */
 public class AndamentoControl extends HttpServlet {
   private static final long serialVersionUID = 1L;
