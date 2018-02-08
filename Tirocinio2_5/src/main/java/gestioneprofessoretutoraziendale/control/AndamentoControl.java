@@ -25,7 +25,6 @@ public class AndamentoControl extends HttpServlet {
   private static final long serialVersionUID = 1L;
   
   static ProfessoreTutorAziendale sessione_teacher;
-  
   static ProfessoreTutorAziendale sessione_tutor;
   
   static String return_path = "/index.jsp";
