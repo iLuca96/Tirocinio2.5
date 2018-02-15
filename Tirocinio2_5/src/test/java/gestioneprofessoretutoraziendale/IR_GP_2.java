@@ -20,6 +20,6 @@ public class IR_GP_2 extends TestCase {
     AndamentoControl andamento = new AndamentoControl();
     String oraFine = "28:00";
     boolean actual = andamento.validateOreSvolte(oraFine);
-    assertEquals(true, actual);
+    assertEquals(false, actual);
   }
 }

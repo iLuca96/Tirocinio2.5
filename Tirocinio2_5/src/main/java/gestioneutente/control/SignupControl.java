@@ -29,6 +29,7 @@ public class SignupControl extends HttpServlet {
 
   static StudenteModel model;
 
+  
   static {
 
     model = new StudenteModel();

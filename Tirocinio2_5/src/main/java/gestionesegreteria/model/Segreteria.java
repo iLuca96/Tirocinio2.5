@@ -10,6 +10,7 @@ public class Segreteria {
   */
   public Segreteria() {
     this.username = "";
+    
     this.email = "";
   }
 
