@@ -39,9 +39,9 @@ public class AndamentoControl extends HttpServlet {
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    String action = request.getParameter("action");
+    String action = request.getParameter("action") ;
 
-    AndamentoModel andamentoModel = null;
+    AndamentoModel andamentoModel  = null;
     
     try {
       if (action != null) {
